@@ -20,7 +20,7 @@
 6. Escrever e executar seu primeiro script.
 7. Passar no verificador de ambiente.
 
-> As instruções abaixo são para **Windows**. Se você usa macOS ou Linux, avise que eu adapto.
+> As instruções abaixo são para **Windows**. No **macOS**, use `python3` no lugar de `python` (antes de ativar o ambiente), `source .venv/bin/activate` para ativar o ambiente virtual e barras normais (`/`) nos caminhos. O instalador do Mac não tem a opção de PATH; ao final, rode o `Install Certificates.command` que aparece na pasta do Python.
 
 ---
 

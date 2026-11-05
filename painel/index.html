@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS Labs · Painel</title>
+<style>
+  :root {
+    --fundo: #0b0f14;
+    --painel: #121922;
+    --borda: #1f2a36;
+    --texto: #d8e1ea;
+    --suave: #7d8b99;
+    --destaque: #3ddc97;
+    --alerta: #f5b748;
+    --perigo: #ef5b5b;
+    --bloqueado: #3a4553;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .marca { font-family: var(--mono); letter-spacing: .2em; font-size: 13px; color: var(--destaque); }
+  h1 { margin: 4px 0 0; font-size: 26px; }
+  .sub { color: var(--suave); font-size: 13px; font-family: var(--mono); }
+  .cartao { background: var(--painel); border: 1px solid var(--borda); border-radius: 10px; padding: 20px; margin-top: 20px; }
+  .rotulo { font-family: var(--mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--suave); margin: 0 0 12px; }
+  .status { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .numero { font-size: 32px; font-weight: 700; font-family: var(--mono); }
+  .barra { height: 10px; background: var(--borda); border-radius: 5px; overflow: hidden; margin-top: 10px; }
+  .barra > div { height: 100%; background: var(--destaque); width: 0; transition: width .6s ease; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--destaque); color: var(--destaque); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+  .vazio { color: var(--suave); font-size: 14px; }
+  .mapa { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; }
+  .dia { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; min-height: 108px; }
+  .dia .n { font-family: var(--mono); font-size: 11px; color: var(--suave); }
+  .dia .t { font-size: 14px; margin-top: 4px; }
+  .dia .s { font-family: var(--mono); font-size: 11px; margin-top: 8px; }
+  .dia.concluida { border-color: var(--destaque); }
+  .dia.concluida .s { color: var(--destaque); }
+  .dia.disponivel { border-color: var(--alerta); box-shadow: 0 0 0 1px var(--alerta) inset; }
+  .dia.disponivel .s { color: var(--alerta); }
+  .dia.bloqueada { opacity: .5; }
+  .dia.bloqueada .s { color: var(--bloqueado); }
+  .dia.chefe .t::before { content: "◆ "; color: var(--perigo); }
+  .missao h2 { margin: 0 0 6px; font-size: 20px; }
+  pre { background: var(--fundo); border: 1px solid var(--borda); border-radius: 6px; padding: 12px; overflow-x: auto; font: 13px var(--mono); color: var(--destaque); margin: 12px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 8px 4px; border-top: 1px solid var(--borda); }
+  td.xp { font-family: var(--mono); text-align: right; white-space: nowrap; }
+  td.xp.pos { color: var(--destaque); }
+  td.xp.neg { color: var(--perigo); }
+  td.data { color: var(--suave); font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+  .erro { border-color: var(--perigo); }
+  footer { margin-top: 32px; color: var(--suave); font-size: 12px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <div class="marca">NEXUS LABS · SISTEMA INTERNO</div>
+      <h1 id="jogador">Estação de trabalho</h1>
+    </div>
+    <div class="sub" id="ato">ATO 1 · A EMPRESA</div>
+  </header>
+
+  <section class="cartao" id="aviso" hidden></section>
+
+  <section class="cartao">
+    <p class="rotulo">Status do colaborador</p>
+    <div class="status">
+      <div><div class="sub">XP total</div><div class="numero" id="xp">0</div></div>
+      <div><div class="sub">Cargo atual</div><div class="numero" id="cargo" style="font-size:20px;margin-top:8px">Estagiário</div></div>
+      <div>
+        <div class="sub" id="proximo">Próximo cargo</div>
+        <div class="barra"><div id="barra"></div></div>
+        <div class="sub" id="faltam" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cartao missao" id="missao-dia"></section>
+
+  <section class="cartao">
+    <p class="rotulo">Mapa · Semana 1 · Reativação dos fundamentos</p>
+    <div class="mapa" id="mapa"></div>
+  </section>
+
+  <section class="cartao">
+    <p class="rotulo">Habilidades desbloqueadas</p>
+    <div class="chips" id="habilidades"></div>
+  </section>
+
+  <section class="cartao">
+    <p class="rotulo">Registro de atividades</p>
+    <table id="historico"></table>
+  </section>
+
+  <footer>Os verificadores atualizam este painel automaticamente. Depois de rodar uma missão, recarregue a página.</footer>
+</div>
+
+<script src="progresso.js"></script>
+<script>
+  const CARGOS = [
+    { nome: "Estagiário", xp: 0 },
+    { nome: "Assistente de Automação", xp: 500 },
+    { nome: "Desenvolvedor Júnior", xp: 1300 },
+    { nome: "Operador", xp: 2200 },
+    { nome: "Decifrador", xp: 3200 },
+    { nome: "Infiltrador", xp: 4300 },
+    { nome: "Arquiteto da Rede", xp: 5500 },
+  ];
+
+  // publicada: false significa que a missão ainda não foi entregue pelo Claude.
+  const SEMANA_1 = [
+    { dia: 1, titulo: "Credenciamento", ids: ["missao-00"], pasta: "missao-00-ambiente", publicada: true },
+    { dia: 2, titulo: "O cadastro quebrado", ids: ["missao-01-A", "missao-01-B"], pasta: "missao-01-cadastro", publicada: true },
+    { dia: 3, titulo: "Operadores e condicionais", ids: ["missao-02"], publicada: false },
+    { dia: 4, titulo: "Laços de repetição", ids: ["missao-03"], publicada: false },
+    { dia: 5, titulo: "Funções", ids: ["missao-04"], publicada: false },
+    { dia: 6, titulo: "Strings e listas", ids: ["missao-05"], publicada: false },
+    { dia: 7, titulo: "Chefe 1: relatório de clientes", ids: ["chefe-01"], publicada: false, chefe: true },
+  ];
+
+  const dados = window.PROGRESSO;
+
+  function el(id) { return document.getElementById(id); }
+
+  if (!dados) {
+    const aviso = el("aviso");
+    aviso.hidden = false;
+    aviso.classList.add("erro");
+    aviso.innerHTML = "<p class='rotulo'>Sem dados</p>O arquivo <code>progresso.js</code> não foi encontrado. Rode <code>python nucleo/progresso.py</code> na raiz do projeto.";
+  } else {
+    const ids = new Set(dados.conquistas.map(c => c.id));
+    const xp = dados.conquistas.reduce((soma, c) => soma + c.xp, 0);
+
+    el("jogador").textContent = dados.jogador || "Estação de trabalho";
+    el("xp").textContent = xp;
+
+    let atual = CARGOS[0];
+    let proximo = null;
+    for (let i = 0; i < CARGOS.length; i++) {
+      if (xp >= CARGOS[i].xp) { atual = CARGOS[i]; proximo = CARGOS[i + 1] || null; }
+    }
+    el("cargo").textContent = atual.nome;
+    if (proximo) {
+      const pct = Math.max(0, Math.min(100, ((xp - atual.xp) / (proximo.xp - atual.xp)) * 100));
+      el("proximo").textContent = "Próximo: " + proximo.nome;
+      el("faltam").textContent = "Faltam " + (proximo.xp - xp) + " XP";
+      requestAnimationFrame(() => { el("barra").style.width = pct + "%"; });
+    } else {
+      el("proximo").textContent = "Cargo máximo atingido";
+      el("barra").style.width = "100%";
+    }
+    if (atual.xp >= 2200) el("ato").textContent = "ATO 2 · A REDE OCULTA";
+
+    // Mapa da semana: concluída, disponível ou bloqueada.
+    let anteriorConcluida = true;
+    let missaoDoDia = null;
+    el("mapa").innerHTML = SEMANA_1.map(m => {
+      const concluida = m.ids.every(id => ids.has(id));
+      let estado = "bloqueada", texto = "BLOQUEADA";
+      if (concluida) { estado = "concluida"; texto = "CONCLUÍDA"; }
+      else if (anteriorConcluida && m.publicada) { estado = "disponivel"; texto = "DISPONÍVEL"; missaoDoDia = missaoDoDia || m; }
+      else if (anteriorConcluida) { texto = "EM PREPARO"; }
+      anteriorConcluida = concluida;
+      return `<div class="dia ${estado} ${m.chefe ? "chefe" : ""}">
+        <div class="n">DIA ${m.dia}</div><div class="t">${m.titulo}</div><div class="s">${texto}</div></div>`;
+    }).join("");
+
+    const cartao = el("missao-dia");
+    if (missaoDoDia) {
+      const feitas = missaoDoDia.ids.filter(id => ids.has(id)).length;
+      cartao.innerHTML = `<p class="rotulo">Demanda do dia · Dia ${missaoDoDia.dia}</p>
+        <h2>${missaoDoDia.titulo}</h2>
+        <div class="sub">Partes concluídas: ${feitas}/${missaoDoDia.ids.length}</div>
+        <pre>python missoes/${missaoDoDia.pasta}/verificar_missao_0${missaoDoDia.dia - 1}.py</pre>`;
+    } else {
+      cartao.innerHTML = `<p class="rotulo">Demanda do dia</p><h2>Nenhuma demanda liberada</h2>
+        <div class="sub">Aguarde o próximo pacote de missões.</div>`;
+    }
+
+    el("habilidades").innerHTML = dados.habilidades.length
+      ? dados.habilidades.map(h => `<span class="chip">${h}</span>`).join("")
+      : "<span class='vazio'>Nenhuma habilidade ainda.</span>";
+
+    el("historico").innerHTML = dados.conquistas.slice().reverse().map(c => {
+      const sinal = c.xp >= 0 ? "pos" : "neg";
+      const valor = (c.xp >= 0 ? "+" : "") + c.xp + " XP";
+      return `<tr><td class="data">${c.data}</td><td>${c.titulo}</td><td class="xp ${sinal}">${valor}</td></tr>`;
+    }).join("");
+  }
+
+  console.log("%c[ORÁCULO] Você não deveria estar lendo isto, estagiário.", "color:#ef5b5b;font-family:monospace");
+</script>
+</body>
+</html>

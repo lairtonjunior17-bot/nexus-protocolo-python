@@ -55,10 +55,19 @@ def checar_primeiro_script():
     if not arquivo.exists():
         return False, "ola_nexus.py não encontrado nesta pasta"
     codigo = arquivo.read_text(encoding="utf-8")
+
+    # Correção do Dia 2 (falha encontrada pelo jogador): antes de aprovar,
+    # o verificador tenta compilar o código. Se houver erro de sintaxe,
+    # o script não roda, então não pode ser aprovado.
+    try:
+        compile(codigo, str(arquivo), "exec")
+    except SyntaxError as erro:
+        return False, f"erro de sintaxe na linha {erro.lineno}: {erro.msg}"
+
     faltando = [funcao for funcao in ("input(", "print(") if funcao not in codigo]
     if faltando:
         return False, f"o script precisa usar: {', '.join(faltando)}"
-    return True, "encontrado e com input() e print()"
+    return True, "compila e usa input() e print()"
 
 
 def main():

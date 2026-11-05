@@ -9,8 +9,9 @@ O próprio jogo é um sistema real: painel web, banco de dados no Supabase, orqu
 | Fase | Situação |
 |---|---|
 | Documento de projeto | Concluído |
-| Missão 0: ambiente | Em andamento |
-| Painel web v0 | A fazer |
+| Missão 0: ambiente | Concluída |
+| Missão 1: variáveis, tipos, entrada e saída | Disponível |
+| Painel web v0 | Concluído |
 | Banco de dados e N8N | A fazer |
 | RAG | A fazer |
 | Modelo de ML | A fazer |
@@ -19,6 +20,7 @@ O próprio jogo é um sistema real: painel web, banco de dados no Supabase, orqu
 
 ```
 docs/       documento de projeto e glossário técnico
+nucleo/     progresso do jogador e sistema de dicas
 missoes/    missões práticas com verificadores automáticos
 apostilas/  material de estudo temático (fonte do NotebookLM e do RAG)
 painel/     interface web do jogo
@@ -33,3 +35,9 @@ ml/         modelo de previsão de esquecimento
 - [Documento de projeto](docs/01-documento-de-projeto.md)
 - [Glossário técnico](docs/glossario-tecnico.md)
 - [Missão 0: Credenciamento](missoes/missao-00-ambiente/README.md)
+- [Apostila 1: variáveis, tipos, entrada e saída](apostilas/apostila-01-variaveis-tipos-entrada-saida.md)
+- [Missão 1: O cadastro quebrado](missoes/missao-01-cadastro/README.md)
+
+## Como abrir o painel
+
+Abra o arquivo `painel/index.html` no navegador. No Mac: `open painel/index.html`.

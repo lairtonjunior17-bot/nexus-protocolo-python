@@ -1,0 +1,10 @@
+{
+  "A": {
+    "1": "Rode o script e leia a ÚLTIMA linha do erro: ela diz o tipo (TypeError, NameError...). Existem três defeitos. Pense em qual é o tipo de dado que o input() devolve, em como o Python junta texto com número e em como os nomes das variáveis estão escritos.",
+    "2": "Defeito 1: input() sempre devolve texto (str). '300' * 12 repete o texto 12 vezes. Converta com int(...), como já foi feito com float(...) na tarifa.\nDefeito 2: 'texto' + número gera TypeError. Converta o número com str(...) ou use uma f-string.\nDefeito 3: compare, letra por letra, o nome da variável usada no último print com o nome criado duas linhas acima."
+  },
+  "B": {
+    "1": "Siga a ordem: 1) leia os três dados com input(); 2) converta idade com int() e valor com float(); 3) calcule ano de nascimento e gasto anual em variáveis; 4) mostre tudo com print() e f-strings. Para duas casas decimais, use {variavel:.2f} dentro da f-string.",
+    "2": "Estrutura parecida (não é a resposta):\n\nproduto = input(\"Produto: \")\nquantidade = int(input(\"Quantidade: \"))\npreco = float(input(\"Preço: \"))\ntotal = quantidade * preco\nprint(f\"Produto: {produto}\")\nprint(f\"Total: R$ {total:.2f}\")"
+  }
+}
