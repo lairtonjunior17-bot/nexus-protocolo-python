@@ -1,0 +1,16 @@
+# Ambiente virtual
+.venv/
+
+# Segredos: nunca enviar ao GitHub
+.env
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db
